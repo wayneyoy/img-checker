@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图片取证检查器 · Image Forensics Inspector</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- 单行精简 Header -->
+    <header class="header">
+      <div class="header-inner">
+        <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="7"/>
+          <line x1="16.5" y1="16.5" x2="22" y2="22"/>
+        </svg>
+        <span class="brand-title">图片取证检查器</span>
+        <span class="brand-sep">·</span>
+        <span class="brand-sub">Image Forensics Inspector v1.0</span>
+        <span class="header-badge">5维度 · 全参数 · 取证级</span>
+      </div>
+    </header>
+
+    <main class="main">
+
+      <!-- Drop Zone -->
+      <div class="drop-zone" id="dropZone">
+        <div class="drop-inner">
+          <svg class="drop-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="6" y="10" width="52" height="38" rx="4"/>
+            <circle cx="21" cy="26" r="6"/>
+            <polyline points="6,48 22,32 32,42 42,28 58,48"/>
+            <line x1="32" y1="60" x2="32" y2="48"/>
+            <polyline points="24,55 32,60 40,55"/>
+          </svg>
+          <p class="drop-title">拖拽图片到这里，或点击选择文件</p>
+          <p class="drop-sub">JPG · PNG · WebP · GIF · BMP · TIFF · HEIC · AVIF · 支持多文件</p>
+          <label class="drop-btn">
+            选择文件
+            <input type="file" id="fileInput" accept="image/*" multiple>
+          </label>
+        </div>
+      </div>
+
+      <!-- Results Area -->
+      <div id="results" class="results hidden">
+
+        <!-- Loading -->
+        <div id="loadingState" class="loading-state hidden">
+          <div class="spinner"></div>
+          <p>正在分析图片参数…</p>
+        </div>
+
+        <!-- File Tabs -->
+        <div id="fileTabs" class="file-tabs hidden"></div>
+
+        <!-- Summary Card with thumbnail -->
+        <div id="summaryCard" class="summary-card"></div>
+
+        <!-- Alert Banner -->
+        <div id="alertBanner" class="alert-banner hidden"></div>
+
+        <!-- Sticky Section Nav -->
+        <nav id="sectionNav" class="section-nav hidden">
+          <a href="#dim-1" class="snav-link">格式取证</a>
+          <a href="#dim-4" class="snav-link">AI 检测</a>
+          <a href="#dim-6" class="snav-link">版权风险</a>
+          <a href="#dim-2" class="snav-link">显示质量</a>
+          <a href="#dim-3" class="snav-link">来源追溯</a>
+          <a href="#dim-5" class="snav-link">平台适配</a>
+          <div class="snav-spacer"></div>
+          <button class="snav-export-btn" onclick="App.exportJSON()">JSON</button>
+          <button class="snav-export-btn" onclick="App.exportMarkdown()">MD</button>
+          <button class="snav-export-btn" onclick="App.exportHTML()">HTML</button>
+          <button class="snav-reset-btn" onclick="App.reset()">换图</button>
+        </nav>
+
+        <!-- Dimension Sections (all expanded) -->
+        <div id="dimensionList" class="dimension-list"></div>
+
+        <!-- Bottom Export Bar -->
+        <div class="export-bar">
+          <span class="export-label">导出报告</span>
+          <button class="export-btn json-btn" onclick="App.exportJSON()">JSON</button>
+          <button class="export-btn md-btn" onclick="App.exportMarkdown()">Markdown</button>
+          <button class="export-btn html-btn" onclick="App.exportHTML()">HTML 报告</button>
+          <button class="export-btn reset-btn" onclick="App.reset()">检查新图片</button>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- History Drawer -->
+  <div id="historyOverlay" class="history-overlay hidden" onclick="App.closeHistory()"></div>
+  <div id="historyPanel" class="history-panel hidden">
+    <div class="history-panel-header">
+      <span class="history-panel-title">检测历史</span>
+      <button class="history-clear-btn" onclick="App.clearHistory()">清空</button>
+      <button class="history-close-btn" onclick="App.closeHistory()">✕</button>
+    </div>
+    <div id="historyList" class="history-list"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/exifr@7.1.3/dist/full.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

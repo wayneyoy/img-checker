@@ -48,38 +48,84 @@ const SIZE_PRESETS = [
 // ============================================================
 // 品牌 / IP 版权风险数据库
 // ============================================================
+// 品牌/IP 关键词库 — 与 skill/BRAND-IP-LIBRARY.md 同步
+// 分值说明：5=完整角色形象 4=核心Logo 3=品牌图案 2=局部特征
 const BRAND_DB = {
-  luxury: {
-    label: '奢侈品牌', risk: 'high', color: 'danger',
-    keywords: ['louis vuitton','lv logo','gucci','chanel','hermès','hermes','prada','dior','christian dior','versace','burberry','rolex','cartier','balenciaga','givenchy','valentino','fendi','ysl','saint laurent','bottega veneta','moncler','bulgari','bvlgari','tiffany','van cleef','omega watch','patek philippe','breguet','longines','coach','michael kors','kate spade','marc jacobs','balmain','celine','loewe','berluti','lanvin','moschino','dsquared','off-white','supreme brand'],
+  disney_classic: {
+    label: '迪士尼经典角色', risk: 'high', color: 'danger',
+    keywords: ['mickey mouse','minnie mouse','donald duck','daisy duck','goofy','pluto disney','winnie the pooh','tigger','eeyore','piglet','disney princess','snow white','cinderella','sleeping beauty','ariel little mermaid','belle beauty beast','jasmine aladdin','mulan disney','rapunzel tangled','elsa frozen','anna frozen','moana disney','raya disney'],
   },
-  cartoon_intl: {
-    label: '国际卡通 IP', risk: 'high', color: 'danger',
-    keywords: ['disney','mickey mouse','minnie mouse','donald duck','goofy','pluto disney','frozen elsa','anna frozen','moana disney','simba lion king','buzz lightyear','woody toy story','nemo','dory','cinderella','sleeping beauty','snow white disney','pixar','marvel','avengers','spider-man','spiderman','iron man','captain america','thor marvel','hulk marvel','black widow','batman','superman','wonder woman','dc comics','star wars','luke skywalker','darth vader','yoda','harry potter','hermione','voldemort','lord of the rings','frodo','gandalf','dreamworks','shrek','kung fu panda','madagascar','how to train your dragon','peppa pig','paw patrol','bluey','bob the builder','thomas train','lego ninjago','barbie mattel','hot wheels','snoopy','peanuts charlie brown','looney tunes','bugs bunny','tom and jerry','scooby-doo'],
+  pixar: {
+    label: '皮克斯 Pixar', risk: 'high', color: 'danger',
+    keywords: ['woody toy story','buzz lightyear','nemo','dory','mike wazowski','james p sullivan','sully monsters inc','lightning mcqueen','wall-e','up pixar','coco pixar','soul pixar','inside out','incredibles','ratatouille'],
   },
-  cartoon_jp: {
-    label: '日本动漫 IP', risk: 'high', color: 'danger',
-    keywords: ['pokemon','pikachu','charizard','mewtwo','snorlax','eevee','gengar','bulbasaur','squirtle','hello kitty','sanrio','cinnamoroll','kuromi','my melody','pompompurin','little twin stars','doraemon','nobita','naruto uzumaki','sasuke','kakashi','one piece','luffy','zoro','nami one piece','dragon ball','goku','vegeta','frieza','bleach ichigo','attack on titan','demon slayer','kimetsu','tanjiro','nezuko','my hero academia','deku','all might','jujutsu kaisen','gojo satoru','sword art online','evangelion','gundam','sailor moon','totoro','spirited away','howls moving castle','studio ghibli','detective conan','doraemon','dragonball','dbz','chainsaw man'],
+  marvel: {
+    label: '漫威 Marvel', risk: 'high', color: 'danger',
+    keywords: ['spider-man','spiderman','iron man','captain america','thor marvel','hulk marvel','black widow','black panther','thanos','deadpool','avengers','marvel logo','x-men','doctor strange','ant-man','captain marvel','hawkeye','scarlet witch','guardians galaxy'],
+  },
+  star_wars: {
+    label: '星球大战', risk: 'high', color: 'danger',
+    keywords: ['darth vader','yoda','bb-8','r2-d2','stormtrooper','luke skywalker','star wars logo','millennium falcon','lightsaber','mandalorian','grogu baby yoda'],
+  },
+  dc_comics: {
+    label: 'DC 漫画', risk: 'high', color: 'danger',
+    keywords: ['batman','superman','wonder woman','flash dc','green lantern','aquaman','joker dc','harley quinn','lex luthor','gotham'],
+  },
+  looney_tunes: {
+    label: '乐一通 Looney Tunes', risk: 'high', color: 'danger',
+    keywords: ['bugs bunny','daffy duck','tweety bird','sylvester cat','porsche pig','wile coyote','road runner looney','looney tunes'],
+  },
+  sanrio: {
+    label: '三丽鸥 Sanrio', risk: 'high', color: 'danger',
+    keywords: ['hello kitty','kuromi','my melody','cinnamoroll','pompompurin','little twin stars','keroppi','tuxedosam','aggretsuko','gudetama','sanrio'],
+  },
+  popmart: {
+    label: '泡泡玛特 Pop Mart', risk: 'high', color: 'danger',
+    keywords: ['molly popmart','skullpanda','dimoo','hirono','labubu','pucky','crybaby popmart','the monsters popmart','pop mart'],
+  },
+  nintendo: {
+    label: '任天堂 Nintendo', risk: 'high', color: 'danger',
+    keywords: ['mario','luigi','yoshi','princess peach','bowser','link zelda','zelda nintendo','splatoon','animal crossing','metroid','kirby nintendo','donkey kong','pikmin'],
+  },
+  pokemon: {
+    label: '宝可梦 Pokémon', risk: 'high', color: 'danger',
+    keywords: ['pokemon','pikachu','charizard','mewtwo','snorlax','eevee','gengar','bulbasaur','squirtle','pokeball','poke ball','jigglypuff','meowth','gyarados','umbreon','sylveon'],
+  },
+  jp_anime_shueisha: {
+    label: '日本动漫（集英社）', risk: 'high', color: 'danger',
+    keywords: ['naruto','naruto uzumaki','sasuke','kakashi','one piece','luffy','zoro','nami','dragon ball','goku','vegeta','demon slayer','kimetsu','tanjiro','nezuko','my hero academia','deku','all might','jujutsu kaisen','gojo satoru','chainsaw man','bleach ichigo','hunter x hunter','fullmetal alchemist','death note','boruto'],
+  },
+  jp_anime_other: {
+    label: '日本动漫（其他）', risk: 'high', color: 'danger',
+    keywords: ['doraemon','nobita','sailor moon','detective conan','conan edogawa','evangelion','neon genesis','gundam','totoro','spirited away','howls moving castle','studio ghibli','no face spirited','nausicaa','princess mononoke','kiki delivery','lupin iii','dragonball dbz','attack on titan','titan aot'],
+  },
+  kr_ip: {
+    label: '韩国 IP', risk: 'high', color: 'danger',
+    keywords: ['ryan kakao','apeach kakao','kakao friends','bt21','tata bts','koya bt21','rj bt21','chimmy bt21','cooky bt21','mang bt21','van bt21','line friends'],
   },
   cartoon_cn: {
     label: '中国 IP', risk: 'high', color: 'danger',
-    keywords: ['喜羊羊','灰太狼','懒羊羊','沸羊羊','美羊羊','熊大','熊二','光头强','熊出没','猪猪侠','超级飞侠','大头儿子','小头爸爸','葫芦娃','黑猫警长','哪吒','白蛇','姜子牙','新神榜','天官赐福','魔道祖师','陈情令','王者荣耀','英雄联盟','原神','genshin impact','ip角色'],
+    keywords: ['喜羊羊','灰太狼','懒羊羊','美羊羊','熊大','熊二','光头强','熊出没','猪猪侠','葫芦娃','黑猫警长','哪吒','新神榜','天官赐福','魔道祖师','陈情令','王者荣耀','原神','genshin impact','nezha animation'],
+  },
+  luxury: {
+    label: '奢侈品牌', risk: 'high', color: 'danger',
+    keywords: ['louis vuitton','lv monogram','lv damier','gucci','double g gucci','chanel','chanel 2.55','hermès','hermes birkin','hermes kelly','prada','dior','christian dior','lady dior','versace medusa','burberry plaid','balenciaga','fendi ff','ysl','saint laurent','bottega veneta','intrecciato','miu miu','givenchy','valentino','moncler','bulgari bvlgari','tiffany','van cleef','omega watch','patek philippe','rolex','cartier','off-white virgil'],
   },
   sports: {
     label: '运动品牌', risk: 'high', color: 'danger',
-    keywords: ['nike swoosh','adidas','puma brand','new balance','under armour','reebok','asics','converse logo','vans logo','jordan brand','air jordan','yeezy','north face','columbia sportswear','patagonia','arc\'teryx','salomon','mammut'],
-  },
-  auto_luxury: {
-    label: '豪华汽车', risk: 'medium', color: 'warn',
-    keywords: ['ferrari','lamborghini','porsche logo','bugatti','bentley','rolls royce','maserati','aston martin','mclaren car','koenigsegg','pagani'],
+    keywords: ['nike swoosh','just do it nike','adidas three stripes','adidas trefoil','jordan jumpman','new balance logo','puma logo','under armour','converse star','vans logo','supreme box logo','off-white brand','reebok','asics','yeezy'],
   },
   tech: {
     label: '科技品牌', risk: 'medium', color: 'warn',
-    keywords: ['apple logo','apple inc','iphone logo','macbook logo','google logo','youtube logo','instagram logo','facebook logo','meta logo','twitter logo','x logo elon','amazon logo','netflix logo','spotify logo','microsoft logo','windows logo','xbox logo','playstation logo','nintendo logo','adobe logo','openai logo','chatgpt'],
+    keywords: ['apple logo','apple bite','iphone logo','macbook','google logo','youtube logo','instagram logo','facebook logo','meta logo','twitter bird','x twitter','tiktok logo','wechat logo','weixin','microsoft logo','windows logo','xbox','playstation logo','nintendo logo','adobe logo','openai','chatgpt logo','spotify','netflix logo','amazon logo'],
   },
   food_bev: {
-    label: '食品饮料', risk: 'medium', color: 'warn',
-    keywords: ["mcdonald's",'mcdonalds','kfc logo','starbucks','coca-cola','coca cola','pepsi logo','red bull brand','heineken','budweiser','louisvuitton','haagen-dazs','häagen-dazs'],
+    label: '餐饮食品', risk: 'medium', color: 'warn',
+    keywords: ["mcdonald's",'mcdonalds golden arches','kfc colonel','starbucks siren','coca-cola script','pepsi globe','red bull','michelin man','oreo','m&m','haagen-dazs','heineken','budweiser'],
+  },
+  auto_luxury: {
+    label: '豪华汽车', risk: 'medium', color: 'warn',
+    keywords: ['ferrari logo','lamborghini logo','porsche logo','bugatti logo','bentley logo','rolls royce','maserati logo','aston martin','mclaren logo','koenigsegg','pagani'],
   },
 };
 
@@ -415,38 +461,69 @@ async function analyzeDim3(ctx) {
   return {camera,shooting,gps,copyright,completeness,hasEXIF,hasIPTC,hasXMP};
 }
 
+// AI 检测打分 — 与 skill/AI-DETECTION-GUIDE.md 阈值同步
+// 阈值：0-2分=低可能性  3-5分=疑似AI  ≥6分=高可能性
 function analyzeDim4(ctx) {
   const {file,dims,dim3,meta}=ctx;
   const signals=[];let aiScore=0;
+
+  // 5分：决定性证据 — CreatorTool 明确含 AI 工具名
+  const creatorTool=meta?.CreatorTool||meta?.Software||null;
+  const aiToolDetected=creatorTool&&['stable diffusion','midjourney','dall-e','comfyui','invokeai','firefly','imagen','gemini','flux','ideogram','novelai','leonardo'].some(k=>creatorTool.toLowerCase().includes(k));
+  signals.push({label:'XMP/EXIF 标注 AI 工具',detail:aiToolDetected?`检测到: ${creatorTool}`:(creatorTool?`工具: ${creatorTool}`:'无工具信息'),positive:aiToolDetected,weight:5});
+  if (aiToolDetected) aiScore+=5;
+
+  // 3分：强支撑 — UUID文件名 + AI常见分辨率同时命中
+  const isUUID=UUID_REGEX.test(file.name);
+  const resKey=`${dims?.width}x${dims?.height}`;
+  const aiRes=AI_RESOLUTIONS.has(resKey);
+  const uuidAndAiRes=isUUID&&aiRes;
+  signals.push({label:'UUID 文件名 + AI 常见分辨率',detail:uuidAndAiRes?`UUID文件名 + ${resKey} 为 AI 常见输出尺寸`:(isUUID?`文件名含 UUID（${file.name}）`:(aiRes?`${resKey} 为 AI 常见分辨率`:'不命中')),positive:uuidAndAiRes,weight:3});
+  if (uuidAndAiRes) aiScore+=3;
+
+  // 2分：辅助信号 — 完全无 EXIF
   const noEXIF=!dim3.hasEXIF;
   signals.push({label:'无拍摄 EXIF 信息',detail:noEXIF?'真实相机拍摄通常含设备和时间信息':`相机: ${dim3.camera.make||''} ${dim3.camera.model||''}`,positive:noEXIF,weight:2});
   if (noEXIF) aiScore+=2;
-  const resKey=`${dims?.width}x${dims?.height}`;const aiRes=AI_RESOLUTIONS.has(resKey);
-  signals.push({label:'分辨率为 AI 常见尺寸',detail:aiRes?`${resKey} 是 AI 常见输出分辨率`:`${resKey} 不在已知 AI 分辨率列表`,positive:aiRes,weight:2});
-  if (aiRes) aiScore+=2;
-  const isUUID=UUID_REGEX.test(file.name);
-  signals.push({label:'文件名含 UUID 特征',detail:isUUID?`${file.name} 含 UUID，常见于 AI 平台自动命名`:'文件名不含 UUID',positive:isUUID,weight:1});
-  if (isUUID) aiScore+=1;
+
+  // 2分：辅助信号 — ICC Profile 来自 Google（Imagen/Gemini 特征）
   const iccGoogle=!!(meta?.ProfileCopyright||'').toLowerCase().includes('google');
   signals.push({label:'ICC Profile 来自 Google Inc.',detail:iccGoogle?`ICC: ${meta?.ProfileDescription||'sRGB'} (${meta?.ProfileCopyright})，Gemini/Imagen 特征`:(meta?.ProfileDescription?`ICC: ${meta.ProfileDescription}`:'无 ICC Profile'),positive:iccGoogle,weight:2});
   if (iccGoogle) aiScore+=2;
-  const creatorTool=meta?.CreatorTool||meta?.Software||null;
-  const aiToolDetected=creatorTool&&['stable diffusion','midjourney','dall-e','comfyui','invokeai','firefly','imagen','gemini','flux','ideogram'].some(k=>creatorTool.toLowerCase().includes(k));
-  signals.push({label:'XMP/EXIF 标注 AI 工具',detail:aiToolDetected?`检测到: ${creatorTool}`:(creatorTool?`工具: ${creatorTool}`:'无工具信息'),positive:aiToolDetected,weight:3});
-  if (aiToolDetected) aiScore+=3;
+
+  // 1分：弱信号 — 单独 UUID 文件名（未配合 AI 分辨率）
+  if (!uuidAndAiRes&&isUUID) {
+    signals.push({label:'文件名含 UUID 特征',detail:`${file.name}，常见于 AI 平台自动命名`,positive:true,weight:1});
+    aiScore+=1;
+  }
+
+  // 1分：弱信号 — 分辨率为 AI 常见尺寸（未配合 UUID）
+  if (!uuidAndAiRes&&aiRes) {
+    signals.push({label:'分辨率为 AI 常见尺寸',detail:`${resKey} 在已知 AI 输出分辨率列表中`,positive:true,weight:1});
+    aiScore+=1;
+  }
+
+  // 1分：弱信号 — 扩展名伪装
   const mismatch=ctx.dim1?.mismatch;
-  signals.push({label:'文件扩展名与真实格式不一致',detail:mismatch?`扩展名伪装，AI 平台下载常见此情况`:'扩展名与真实格式一致',positive:mismatch,weight:1});
+  signals.push({label:'文件扩展名与真实格式不一致',detail:mismatch?`扩展名伪装，AI 平台下载常见此情况`:'扩展名与真实格式一致',positive:!!mismatch,weight:1});
   if (mismatch) aiScore+=1;
+
+  // 平台推断
   let platform=null;
-  if (iccGoogle&&(resKey==='768x1024'||resKey==='1024x1536')) platform='Gemini / Imagen（Google）';
+  if (aiToolDetected) platform=creatorTool;
+  else if (iccGoogle) platform='Gemini / Imagen（Google）';
   else if (isUUID&&(resKey==='1024x1024'||resKey==='1024x1792')) platform='DALL-E 3（OpenAI）';
-  else if (aiRes&&!iccGoogle) platform='Stable Diffusion / Flux / ComfyUI 系列';
+  else if (aiRes) platform='Stable Diffusion / Flux / ComfyUI 系列';
+
+  // 阈值判定（与 AI-DETECTION-GUIDE.md 同步：0-2低 3-5疑似 ≥6高）
+  let verdict;
+  if (aiScore>=6) verdict={label:'AI 生成可能性：高',color:'danger',score:aiScore};
+  else if (aiScore>=3) verdict={label:'AI 生成可能性：中（疑似）',color:'warn',score:aiScore};
+  else verdict={label:'AI 生成可能性：低',color:'ok',score:aiScore};
+
   const maxScore=signals.reduce((s,g)=>s+g.weight,0);
   const pct=aiScore/maxScore;
-  let verdict;
-  if (pct>=.65) verdict={label:'AI 生成可能性：高',color:'danger',pct};
-  else if (pct>=.35) verdict={label:'AI 生成可能性：中',color:'warn',pct};
-  else verdict={label:'AI 生成可能性：低',color:'ok',pct};
+  verdict.pct=pct;
   return {signals,verdict,platform,aiScore,maxScore};
 }
 

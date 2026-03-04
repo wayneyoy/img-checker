@@ -1,163 +1,8 @@
 # img-checker · 图片取证检查器
 
-**English** | [中文](#中文说明)
+[中文](#中文说明) | **English**
 
-A 6-dimension image forensics toolkit available in two flavors:
-
-| | Web Demo | AI Agent Skill |
-|---|---|---|
-| **How to use** | Browser, drag & drop | Talk to AI agent |
-| **AI Detection** | Heuristic (metadata only) | Visual AI + metadata scoring |
-| **Brand/IP Detection** | Keyword scan in metadata | Visual recognition across 15 company libraries |
-| **Output** | Interactive report in browser | Structured Markdown report with scored verdict |
-| **No server needed** | ✅ | ✅ (runs in Cursor) |
-
-**[→ Live Demo](https://static.qiantucdn.com/share/imagedata/index.html)** &nbsp;·&nbsp; Double-click `index.html` to use locally
-
----
-
-## Web Demo — Pure Frontend Tool
-
-Drop an image in your browser, get an instant report. No server, no upload, no API keys.
-
-| Dimension | What it checks |
-|---|---|
-| 🔍 Format Forensics | Magic bytes, MIME type, SHA-256, encoding, extension mismatch |
-| 📐 Resize & Compress | Center-crop to presets, compress to target file size, one-click combined op |
-| 🤖 AI Detection | Heuristic signals: missing EXIF, UUID filename, AI resolutions, CreatorTool keywords |
-| ⚠️ Brand/IP Risk | Keyword scan across filename + metadata for 100+ brands and cartoon IPs |
-| 🖼 Visual Quality | Resolution, aspect ratio, color mode, DPI, JPEG quality estimate |
-| 🗂 Origin Tracing | Full EXIF/IPTC/XMP, GPS reverse geocode, camera info, copyright fields |
-
-**Supports**: JPEG · PNG · WebP · GIF · HEIC/HEIF (with fallback via heic2any)
-
-**Limitations of the web version:**
-- AI Detection relies on metadata heuristics only — cannot see pixel content
-- Brand/IP Risk is keyword-based — cannot visually recognize logos or characters in the image
-
-### Usage
-
-1. Open [Live Demo](https://static.qiantucdn.com/share/imagedata/index.html), or clone and double-click `index.html`
-2. Drag & drop an image (or click to select) — supports multiple files
-3. Browse the 6-dimension report
-4. Use built-in tools to resize, compress, or convert format
-5. Click "Copy Image" to paste directly into ChatGPT, Claude, etc.
-
-No build step. No npm. No API keys. Works entirely in your browser.
-
----
-
-## AI Agent Skill — Vision-Powered Deep Analysis
-
-The `skill/` folder contains a [Cursor](https://cursor.sh) agent skill that upgrades two dimensions with real visual AI analysis:
-
-### What the Skill adds
-
-**🤖 AI Generation Detection (upgraded)**
-
-Uses the AI agent's native vision to look at pixel content and score against a visual artifact standard library (`AI-DETECTION-GUIDE.md`):
-
-| Signal type | Score | Examples |
-|---|---|---|
-| Decisive evidence | 5 pts | Hand anatomy errors, unreadable text, CreatorTool = AI tool name |
-| Strong support | 3 pts | Over-smooth skin, background physics violation, edge melting |
-| Supporting signal | 2 pts | No EXIF, fabric pattern discontinuity |
-| Weak signal | 1 pt | Glass-like eyes, AI-typical aspect ratio |
-
-Threshold: 0–2 pts 🟢 Low · 3–5 pts 🟡 Suspected · ≥6 pts 🔴 High
-
-**⚠️ Brand/IP Risk Detection (upgraded)**
-
-Uses visual recognition against a curated library of 15 company groups (`BRAND-IP-LIBRARY.md`) covering:
-
-Disney · Marvel · Warner/DC · Sanrio · Pop Mart · Nintendo · Pokémon · Japanese anime (Naruto, One Piece, Ghibli…) · Korean IPs · Chinese IPs · Luxury brands · Sports brands · Tech brands · F&B brands · Protected architecture
-
-| Match type | Score |
-|---|---|
-| Complete character appearance (Mickey, Pikachu, Hello Kitty…) | 5 pts |
-| Core Logo present (Nike Swoosh, Apple, LV monogram…) | 4 pts |
-| Brand signature pattern (Burberry plaid, Chanel quilted…) | 3 pts |
-| Partial brand element | 2 pts |
-| Style similar, source uncertain | 1 pt |
-
-Threshold: 0 pts 🟢 None · 1–3 pts 🟡 Medium · ≥4 pts 🔴 High
-
-### Report structure
-
-The skill outputs a **verdict-first** Markdown report:
-
-```
-⚡ Summary Verdict  ← see this first
-  AI likelihood    [score + 1-line reason]
-  Brand/IP risk    [score + 1-line reason]
-  Format safety    [ok / mismatch]
-  → Final recommendation
-
-Detailed Report    ← dig in if needed
-  1. AI Detection  (scored breakdown)
-  2. Brand/IP Risk (matched elements list)
-  3. Format Forensics
-  4. Visual Quality
-  5. Origin Tracing
-  6. Platform Compatibility
-```
-
-### Skill files
-
-```
-skill/
-├── SKILL.md               # Execution workflow & output spec
-├── AI-DETECTION-GUIDE.md  # Visual AI artifact scoring standard
-└── BRAND-IP-LIBRARY.md    # Brand/IP visual recognition library (15 company groups)
-```
-
-To use: install in [Cursor](https://cursor.sh), then tell the agent: "帮我检测这张图" / "Check this image for AI generation and IP risk".
-
----
-
-## Size Presets
-
-Three built-in presets (with recommended target file size):
-
-| Preset | Size | Target |
-|---|---|---|
-| Banner | 700×332px | ≤150kB |
-| Feed Landscape | 320×240px | ≤40kB |
-| Feed Square | 720×720px | ≤200kB |
-
-Plus standard social presets: Xiaohongshu · Douyin · Weibo · WeChat · etc.
-
-To customize, edit `SIZE_PRESETS` at the top of `app.js`:
-
-```js
-const SIZE_PRESETS = [
-  { label: 'Your Preset', w: 800, h: 600, note: '4:3', targetKB: 100 },
-];
-```
-
----
-
-## Tech Stack (Web Demo)
-
-- Vanilla HTML + CSS + JavaScript (ES2020) — no framework
-- [exifr](https://github.com/MikeKovarik/exifr) — EXIF/IPTC/XMP parsing
-- [heic2any](https://github.com/alexcorvi/heic2any) — HEIC decoding fallback
-- Web Crypto API — SHA-256 fingerprinting
-- Canvas API — format conversion, compression, center-crop resize
-
----
-
-## License
-
-MIT © 2026
-
----
-
----
-
-## 中文说明
-
-本项目提供两种使用方式，能力边界不同：
+六维度图片取证工具，提供两种使用方式：
 
 | | 网页 Demo 版 | AI Agent Skill 版 |
 |---|---|---|
@@ -171,7 +16,9 @@ MIT © 2026
 
 ---
 
-## 网页 Demo 版 — 纯前端工具
+## 中文说明
+
+### 网页 Demo 版 — 纯前端工具
 
 | 维度 | 检测内容 |
 |---|---|
@@ -188,23 +35,21 @@ MIT © 2026
 - AI 生成检测仅依赖元数据启发式，**无法读取图片像素内容**
 - 品牌/IP 风险仅为关键词扫描，**无法视觉识别**画面中的 Logo 或卡通形象
 
-### 使用方法
+#### 使用方法
 
 1. 打开[在线演示](https://static.qiantucdn.com/share/imagedata/index.html)，或下载后双击 `index.html`
 2. 拖拽图片进入（或点击选择），支持同时分析多张
 3. 查看六维度取证报告
-4. 使用内置工具裁切/压缩/转换格式
+4. 使用内置工具裁切 / 压缩 / 转换格式
 5. 点击「复制图片」可直接粘贴到 ChatGPT、Claude 等 AI 对话框
 
 无需构建，无需 npm，无需 API Key，完全在浏览器本地运行。
 
 ---
 
-## AI Agent Skill 版 — 视觉增强深度检测
+### AI Agent Skill 版 — 视觉增强深度检测
 
 `skill/` 目录包含一个 [Cursor](https://cursor.sh) Agent Skill，对两个核心维度进行视觉级增强：
-
-### Skill 版新增能力
 
 **🤖 AI 生成检测（升级版）**
 
@@ -235,7 +80,7 @@ MIT © 2026
 
 阈值：0分 🟢 无风险 · 1–3分 🟡 中风险 · ≥4分 🔴 高风险
 
-### 报告结构（结论前置）
+#### 报告结构（结论前置）
 
 ```
 ⚡ 综合判定（先看这里）
@@ -253,7 +98,7 @@ MIT © 2026
   六、平台适配
 ```
 
-### Skill 文件
+#### Skill 文件
 
 ```
 skill/
@@ -266,7 +111,7 @@ skill/
 
 ---
 
-## 自定义尺寸预设
+### 自定义尺寸预设
 
 修改 `app.js` 顶部的 `SIZE_PRESETS` 数组：
 
@@ -277,3 +122,111 @@ const SIZE_PRESETS = [
 ```
 
 `targetKB` 为可选字段，填写后「裁切压缩」按钮会自动使用该目标体积。
+
+---
+
+### 技术栈（网页版）
+
+- 原生 HTML + CSS + JavaScript（ES2020），无框架
+- [exifr](https://github.com/MikeKovarik/exifr) — EXIF/IPTC/XMP 解析
+- [heic2any](https://github.com/alexcorvi/heic2any) — HEIC 兜底解码
+- Web Crypto API — SHA-256 指纹
+- Canvas API — 格式转换、压缩、居中裁切
+
+---
+
+### 开源协议
+
+MIT © 2026
+
+---
+
+---
+
+## English
+
+A 6-dimension image forensics toolkit available in two flavors:
+
+| | Web Demo | AI Agent Skill |
+|---|---|---|
+| **How to use** | Browser, drag & drop | Talk to AI agent |
+| **AI Detection** | Heuristic (metadata only) | Visual AI + metadata scoring |
+| **Brand/IP Detection** | Keyword scan in metadata | Visual recognition across 15 company libraries |
+| **Output** | Interactive report in browser | Structured Markdown report with scored verdict |
+| **No server needed** | ✅ | ✅ (runs in Cursor) |
+
+**[→ Live Demo](https://static.qiantucdn.com/share/imagedata/index.html)** &nbsp;·&nbsp; Double-click `index.html` to use locally
+
+### Web Demo — Pure Frontend Tool
+
+| Dimension | What it checks |
+|---|---|
+| 🔍 Format Forensics | Magic bytes, MIME type, SHA-256, encoding, extension mismatch |
+| 📐 Resize & Compress | Center-crop to presets, compress to target file size, one-click combined op |
+| 🤖 AI Detection | Heuristic signals: missing EXIF, UUID filename, AI resolutions, CreatorTool keywords |
+| ⚠️ Brand/IP Risk | Keyword scan across filename + metadata for 100+ brands and cartoon IPs |
+| 🖼 Visual Quality | Resolution, aspect ratio, color mode, DPI, JPEG quality estimate |
+| 🗂 Origin Tracing | Full EXIF/IPTC/XMP, GPS reverse geocode, camera info, copyright fields |
+
+**Supports**: JPEG · PNG · WebP · GIF · HEIC/HEIF (with fallback via heic2any)
+
+**Limitations of the web version:**
+- AI Detection relies on metadata heuristics only — cannot see pixel content
+- Brand/IP Risk is keyword-based — cannot visually recognize logos or characters in the image
+
+#### Usage
+
+1. Open [Live Demo](https://static.qiantucdn.com/share/imagedata/index.html), or clone and double-click `index.html`
+2. Drag & drop an image (or click to select) — supports multiple files
+3. Browse the 6-dimension report
+4. Use built-in tools to resize, compress, or convert format
+5. Click "Copy Image" to paste directly into ChatGPT, Claude, etc.
+
+No build step. No npm. No API keys. Works entirely in your browser.
+
+---
+
+### AI Agent Skill — Vision-Powered Deep Analysis
+
+The `skill/` folder contains a [Cursor](https://cursor.sh) agent skill that upgrades two dimensions with real visual AI analysis:
+
+**🤖 AI Generation Detection (upgraded)**
+
+| Signal type | Score | Examples |
+|---|---|---|
+| Decisive evidence | 5 pts | Hand anatomy errors, unreadable text, CreatorTool = AI tool name |
+| Strong support | 3 pts | Over-smooth skin, background physics violation, edge melting |
+| Supporting signal | 2 pts | No EXIF, fabric pattern discontinuity |
+| Weak signal | 1 pt | Glass-like eyes, AI-typical aspect ratio |
+
+Threshold: 0–2 pts 🟢 Low · 3–5 pts 🟡 Suspected · ≥6 pts 🔴 High
+
+**⚠️ Brand/IP Risk Detection (upgraded)**
+
+Disney · Marvel · Warner/DC · Sanrio · Pop Mart · Nintendo · Pokémon · Japanese anime (Naruto, One Piece, Ghibli…) · Korean IPs · Chinese IPs · Luxury brands · Sports brands · Tech brands · F&B brands · Protected architecture
+
+| Match type | Score |
+|---|---|
+| Complete character appearance (Mickey, Pikachu, Hello Kitty…) | 5 pts |
+| Core Logo present (Nike Swoosh, Apple, LV monogram…) | 4 pts |
+| Brand signature pattern (Burberry plaid, Chanel quilted…) | 3 pts |
+| Partial brand element | 2 pts |
+| Style similar, source uncertain | 1 pt |
+
+Threshold: 0 pts 🟢 None · 1–3 pts 🟡 Medium · ≥4 pts 🔴 High
+
+---
+
+### Tech Stack (Web Demo)
+
+- Vanilla HTML + CSS + JavaScript (ES2020) — no framework
+- [exifr](https://github.com/MikeKovarik/exifr) — EXIF/IPTC/XMP parsing
+- [heic2any](https://github.com/alexcorvi/heic2any) — HEIC decoding fallback
+- Web Crypto API — SHA-256 fingerprinting
+- Canvas API — format conversion, compression, center-crop resize
+
+---
+
+### License
+
+MIT © 2026
